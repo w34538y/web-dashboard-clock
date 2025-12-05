@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Dashboard Final</title>
+    <title>Smart Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap');
 
@@ -23,7 +23,7 @@
 
         /* === 상단: 시계 영역 === */
         .top-section {
-            flex: 4; /* 상단 40% */
+            flex: 4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -53,7 +53,7 @@
 
         /* === 하단: 정보 영역 === */
         .bottom-section {
-            flex: 5; /* 하단 60% */
+            flex: 5;
             display: flex;
             margin-top: 10px;
         }
@@ -90,6 +90,14 @@
             color: #ddd;
             font-weight: 300;
             line-height: 1.2;
+        }
+
+        /* 마지막 갱신 시간 스타일 (새로 추가됨) */
+        .update-time {
+            font-size: 30px;
+            margin-top: 15px;
+            color: #888;
+            font-weight: 300;
         }
 
         /* 우측: 날짜 및 달력 */
@@ -197,10 +205,8 @@
             
             <div class="input-group">
                 <label class="input-label">도시 선택 (Select City)</label>
-                <!-- list 속성으로 datalist와 연결 -->
                 <input list="korea-cities" id="input-city" class="input-field" placeholder="도시 검색 또는 선택 (예: Seoul)">
                 
-                <!-- 한국 주요 도시 목록 데이터 -->
                 <datalist id="korea-cities">
                     <option value="Seoul">서울</option>
                     <option value="Busan">부산</option>
@@ -285,6 +291,8 @@
             </div>
             <div id="weather-desc" class="weather-detail">설정에서 API키를 입력해주세요</div>
             <div id="humidity" class="weather-detail"></div>
+            <!-- 갱신 시간 표시 (새로 추가됨) -->
+            <div id="last-updated" class="update-time"></div>
         </div>
 
         <div class="right-col">
@@ -307,6 +315,19 @@
         // 전역 변수
         let apiKey = "";
         let city = "Seoul"; 
+
+        // 영문명 -> 한글명 매핑 테이블
+        const cityMap = {
+            "Seoul": "서울", "Busan": "부산", "Incheon": "인천", "Daegu": "대구", "Daejeon": "대전", "Gwangju": "광주",
+            "Suwon": "수원", "Ulsan": "울산", "Jeju": "제주", "Changwon": "창원", "Goyang": "고양", "Yongin": "용인",
+            "Seongnam": "성남", "Bucheon": "부천", "Cheongju": "청주", "Ansan": "안산", "Jeonju": "전주", "Cheonan": "천안",
+            "Namyangju": "남양주", "Hwaseong": "화성", "Anyang": "안양", "Gimhae": "김해", "Pyeongtaek": "평택", "Pohang": "포항",
+            "Uijeongbu": "의정부", "Siheung": "시흥", "Paju": "파주", "Gumi": "구미", "Gwangmyeong": "광명", "Gimpo": "김포",
+            "Jinju": "진주", "Wonju": "원주", "Asan": "아산", "Iksan": "익산", "Yangsan": "양산", "Gunpo": "군포",
+            "Chuncheon": "춘천", "Gyeongsan": "경산", "Gunsan": "군산", "Yeosu": "여수", "Suncheon": "순천", "Mokpo": "목포",
+            "Gangneung": "강릉", "Chungju": "충주", "Icheon": "이천", "Yangju": "양주", "Osan": "오산", "Guri": "구리",
+            "Anseong": "안성", "Seosan": "서산", "Sejong": "세종", "Andong": "안동", "Geoje": "거제"
+        };
 
         window.onload = function() {
             loadSettings(); 
@@ -382,7 +403,6 @@
             if(!apiKey) return;
 
             try {
-                // 도시 이름이 한글로 검색될 경우를 대비해 쿼리 파라미터 확인
                 const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=kr`;
                 const response = await fetch(url);
                 const data = await response.json();
@@ -391,12 +411,22 @@
                     const temp = Math.round(data.main.temp);
                     document.getElementById('temp').innerText = `${temp}°`;
                     document.getElementById('humidity').innerText = `습도 : ${data.main.humidity}%`;
-                    document.getElementById('weather-desc').innerText = data.weather[0].description;
+                    
+                    const koreanName = cityMap[city] || city;
+                    document.getElementById('weather-desc').innerText = `${koreanName} - ${data.weather[0].description}`;
 
                     const iconCode = data.weather[0].icon;
                     const iconImg = document.getElementById('weather-icon-img');
                     iconImg.src = `http://openweathermap.org/img/wn/${iconCode}@4x.png`;
                     iconImg.style.display = "block"; 
+
+                    // 👇 갱신 시간 업데이트 (새로 추가됨)
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    document.getElementById('last-updated').innerText = `Last Updated: ${h}:${m}:${s}`;
+
                 } else {
                     document.getElementById('weather-desc').innerText = "도시/키 오류";
                 }
