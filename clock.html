@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Dashboard Final</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap');
+
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 30px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* === 상단: 시계 영역 === */
+        .top-section {
+            flex: 4; /* 상단 40% */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #clock {
+            font-size: 22vw;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -5px;
+        }
+
+        /* === 설정 버튼 === */
+        .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 40px;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+            z-index: 10;
+            color: #aaa;
+        }
+        .settings-btn:hover, .settings-btn:active { opacity: 1; color: white; }
+
+        /* === 하단: 정보 영역 === */
+        .bottom-section {
+            flex: 5; /* 하단 60% */
+            display: flex;
+            margin-top: 10px;
+        }
+
+        /* 좌측: 날씨 */
+        .left-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 10px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+        }
+
+        #weather-icon-img {
+            width: 180px; 
+            height: 180px;
+            display: none;
+        }
+
+        .temp-big {
+            font-size: 150px;
+            font-weight: 400;
+            margin-left: -10px;
+        }
+
+        .weather-detail {
+            font-size: 80px;
+            margin-top: 15px;
+            color: #ddd;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+
+        /* 우측: 날짜 및 달력 */
+        .right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .date-display {
+            font-size: 80px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: right;
+            line-height: 1.1;
+        }
+
+        .date-green { color: #00FF00; }
+        .date-red { color: #FF3B30; }
+
+        .calendar-wrapper { width: 95%; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #aaa;
+            font-size: 22px;
+            table-layout: fixed;
+        }
+        
+        th, td { text-align: center; padding: 12px 0; }
+        
+        .today {
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+        }
+        .weekend { color: #ff6b6b; }
+
+        /* === 설정 모달 창 === */
+        #settings-modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-title { font-size: 40px; margin-bottom: 30px; font-weight: bold; }
+
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-label { display: block; font-size: 24px; margin-bottom: 10px; color: #aaa; }
+        
+        .input-field {
+            width: 100%; padding: 15px; font-size: 24px;
+            border-radius: 10px; border: 1px solid #555;
+            background-color: #333; color: white;
+            box-sizing: border-box;
+        }
+
+        .api-guide-link {
+            display: block;
+            margin-top: 10px;
+            font-size: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+            text-align: right;
+        }
+        .api-guide-link:hover { text-decoration: underline; }
+
+        .save-btn {
+            background-color: #4CAF50; color: white;
+            padding: 20px 40px; font-size: 30px;
+            border: none; border-radius: 15px; cursor: pointer;
+            margin-top: 20px; width: 100%;
+        }
+        .close-btn {
+            background-color: transparent; color: #aaa;
+            border: 1px solid #aaa; padding: 15px 30px;
+            font-size: 24px; border-radius: 15px; cursor: pointer;
+            margin-top: 15px; width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 설정 모달창 -->
+    <div id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-title">설정 (Settings)</div>
+            
+            <div class="input-group">
+                <label class="input-label">도시 선택 (Select City)</label>
+                <!-- list 속성으로 datalist와 연결 -->
+                <input list="korea-cities" id="input-city" class="input-field" placeholder="도시 검색 또는 선택 (예: Seoul)">
+                
+                <!-- 한국 주요 도시 목록 데이터 -->
+                <datalist id="korea-cities">
+                    <option value="Seoul">서울</option>
+                    <option value="Busan">부산</option>
+                    <option value="Incheon">인천</option>
+                    <option value="Daegu">대구</option>
+                    <option value="Daejeon">대전</option>
+                    <option value="Gwangju">광주</option>
+                    <option value="Suwon">수원</option>
+                    <option value="Ulsan">울산</option>
+                    <option value="Jeju">제주</option>
+                    <option value="Changwon">창원</option>
+                    <option value="Goyang">고양</option>
+                    <option value="Yongin">용인</option>
+                    <option value="Seongnam">성남</option>
+                    <option value="Bucheon">부천</option>
+                    <option value="Cheongju">청주</option>
+                    <option value="Ansan">안산</option>
+                    <option value="Jeonju">전주</option>
+                    <option value="Cheonan">천안</option>
+                    <option value="Namyangju">남양주</option>
+                    <option value="Hwaseong">화성</option>
+                    <option value="Anyang">안양</option>
+                    <option value="Gimhae">김해</option>
+                    <option value="Pyeongtaek">평택</option>
+                    <option value="Pohang">포항</option>
+                    <option value="Uijeongbu">의정부</option>
+                    <option value="Siheung">시흥</option>
+                    <option value="Paju">파주</option>
+                    <option value="Gumi">구미</option>
+                    <option value="Gwangmyeong">광명</option>
+                    <option value="Gimpo">김포</option>
+                    <option value="Jinju">진주</option>
+                    <option value="Wonju">원주</option>
+                    <option value="Asan">아산</option>
+                    <option value="Iksan">익산</option>
+                    <option value="Yangsan">양산</option>
+                    <option value="Gunpo">군포</option>
+                    <option value="Chuncheon">춘천</option>
+                    <option value="Gyeongsan">경산</option>
+                    <option value="Gunsan">군산</option>
+                    <option value="Yeosu">여수</option>
+                    <option value="Suncheon">순천</option>
+                    <option value="Mokpo">목포</option>
+                    <option value="Gangneung">강릉</option>
+                    <option value="Chungju">충주</option>
+                    <option value="Icheon">이천</option>
+                    <option value="Yangju">양주</option>
+                    <option value="Osan">오산</option>
+                    <option value="Guri">구리</option>
+                    <option value="Anseong">안성</option>
+                    <option value="Seosan">서산</option>
+                    <option value="Sejong">세종</option>
+                    <option value="Andong">안동</option>
+                    <option value="Geoje">거제</option>
+                </datalist>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">API Key</label>
+                <input type="text" id="input-key" class="input-field" placeholder="OpenWeatherMap API Key">
+                <a href="https://home.openweathermap.org/users/sign_up" target="_blank" class="api-guide-link">
+                    API Key 무료 발급받기 (Click) ↗
+                </a>
+            </div>
+
+            <button class="save-btn" onclick="saveSettings()">저장하기 (Save)</button>
+            <button class="close-btn" onclick="closeSettings()">닫기 (Close)</button>
+        </div>
+    </div>
+
+    <!-- 메인 화면 -->
+    <div class="top-section">
+        <div id="clock">00:00:00</div>
+        <div class="settings-btn" onclick="openSettings()">⚙️</div>
+    </div>
+
+    <div class="bottom-section">
+        <div class="left-col">
+            <div class="weather-main">
+                <img id="weather-icon-img" src="" alt="">
+                <span id="temp" class="temp-big">--°</span>
+            </div>
+            <div id="weather-desc" class="weather-detail">설정에서 API키를 입력해주세요</div>
+            <div id="humidity" class="weather-detail"></div>
+        </div>
+
+        <div class="right-col">
+            <div class="date-display">
+                <span id="date-text" class="date-green">--/--/--</span><br>
+                <span id="day-text" class="date-red">---</span>
+            </div>
+            <div class="calendar-wrapper">
+                <table id="calendar-table">
+                    <thead>
+                        <tr><th class="weekend">Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th class="weekend">Sat</th></tr>
+                    </thead>
+                    <tbody id="calendar-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let apiKey = "";
+        let city = "Seoul"; 
+
+        window.onload = function() {
+            loadSettings(); 
+            updateTime();
+            generateCalendar();
+            
+            if (apiKey) {
+                getWeather();
+                setInterval(getWeather, 600000); 
+            } else {
+                openSettings(); 
+            }
+            setInterval(updateTime, 1000);
+        };
+
+        function loadSettings() {
+            const savedKey = localStorage.getItem('myWeatherKey');
+            const savedCity = localStorage.getItem('myWeatherCity');
+
+            if (savedKey) apiKey = savedKey;
+            if (savedCity) city = savedCity;
+
+            document.getElementById('input-key').value = apiKey;
+            document.getElementById('input-city').value = city;
+        }
+
+        function saveSettings() {
+            const inputKey = document.getElementById('input-key').value.trim();
+            const inputCity = document.getElementById('input-city').value.trim();
+
+            if (!inputKey) {
+                alert("API Key를 입력해주세요!");
+                return;
+            }
+
+            localStorage.setItem('myWeatherKey', inputKey);
+            localStorage.setItem('myWeatherCity', inputCity || "Seoul");
+
+            apiKey = inputKey;
+            city = inputCity || "Seoul";
+
+            alert("저장되었습니다!");
+            closeSettings();
+            getWeather(); 
+        }
+
+        function openSettings() {
+            document.getElementById('settings-modal').style.display = "flex";
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = "none";
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+
+            const year = String(now.getFullYear()).slice(2);
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const date = String(now.getDate()).padStart(2, '0');
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const dayName = days[now.getDay()];
+
+            document.getElementById('date-text').innerText = `${year}/${month}/${date}`;
+            document.getElementById('day-text').innerText = dayName;
+        }
+
+        async function getWeather() {
+            if(!apiKey) return;
+
+            try {
+                // 도시 이름이 한글로 검색될 경우를 대비해 쿼리 파라미터 확인
+                const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=kr`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const temp = Math.round(data.main.temp);
+                    document.getElementById('temp').innerText = `${temp}°`;
+                    document.getElementById('humidity').innerText = `습도 : ${data.main.humidity}%`;
+                    document.getElementById('weather-desc').innerText = data.weather[0].description;
+
+                    const iconCode = data.weather[0].icon;
+                    const iconImg = document.getElementById('weather-icon-img');
+                    iconImg.src = `http://openweathermap.org/img/wn/${iconCode}@4x.png`;
+                    iconImg.style.display = "block"; 
+                } else {
+                    document.getElementById('weather-desc').innerText = "도시/키 오류";
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('weather-desc').innerText = "네트워크 오류";
+            }
+        }
+
+        function generateCalendar() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            const tbody = document.getElementById('calendar-body');
+            tbody.innerHTML = "";
+
+            let date = 1;
+            for (let i = 0; i < 6; i++) {
+                let row = document.createElement("tr");
+                for (let j = 0; j < 7; j++) {
+                    let cell = document.createElement("td");
+                    if (i === 0 && j < firstDay) {
+                        cell.innerText = "";
+                    } else if (date > lastDate) {
+                        break;
+                    } else {
+                        cell.innerText = date;
+                        if (date === today) cell.classList.add("today");
+                        if (j === 0 || j === 6) cell.classList.add("weekend");
+                        date++;
+                    }
+                    row.appendChild(cell);
+                }
+                tbody.appendChild(row);
+                if (date > lastDate) break;
+            }
+        }
+    </script>
+</body>
+</html>
