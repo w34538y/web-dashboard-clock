@@ -12,7 +12,7 @@
             color: white;
             font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 30px;
+            padding: 3vmin;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -23,7 +23,7 @@
 
         /* === 상단: 시계 영역 === */
         .top-section {
-            flex: 4;
+            flex: 40;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -31,31 +31,33 @@
         }
 
         #clock {
-            font-size: 22vw;
+            font-size: 26vmin; 
             font-weight: 700;
             line-height: 1;
-            letter-spacing: -5px;
+            letter-spacing: -0.5vmin;
         }
 
         /* === 설정 버튼 === */
         .settings-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 40px;
+            top: 0;
+            right: 0;
+            font-size: 5vmin;
             cursor: pointer;
             opacity: 0.3;
             transition: opacity 0.3s;
             z-index: 10;
             color: #aaa;
+            padding: 1vmin;
         }
         .settings-btn:hover, .settings-btn:active { opacity: 1; color: white; }
 
         /* === 하단: 정보 영역 === */
         .bottom-section {
-            flex: 5;
+            flex: 60;
             display: flex;
-            margin-top: 10px;
+            margin-top: 2vmin;
+            gap: 2vmin;
         }
 
         /* 좌측: 날씨 */
@@ -63,40 +65,67 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding-left: 10px;
+            justify-content: space-between; 
+            padding-bottom: 1vmin; 
         }
 
+        .weather-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* 1. 지역명 */
+        .location-name {
+            font-size: 9vmin;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5vmin;
+            line-height: 1.2;
+        }
+
+        /* 2. 날씨 아이콘 + 온도 */
         .weather-main {
             display: flex;
             align-items: center;
         }
 
         #weather-icon-img {
-            width: 180px; 
-            height: 180px;
+            width: 18vmin;
+            height: 18vmin;
             display: none;
+            margin-left: -2vmin; 
         }
 
         .temp-big {
-            font-size: 150px;
+            font-size: 16vmin;
             font-weight: 400;
-            margin-left: -10px;
+            margin-left: -1vmin;
         }
 
-        .weather-detail {
-            font-size: 80px;
-            margin-top: 15px;
+        /* 3. 날씨 설명 */
+        .weather-desc-text {
+            font-size: 5.5vmin;
             color: #ddd;
             font-weight: 300;
+            margin-top: 0.5vmin;
             line-height: 1.2;
         }
 
-        /* 마지막 갱신 시간 스타일 (새로 추가됨) */
+        /* 4. 습도 */
+        .humidity-text {
+            font-size: 5.5vmin;
+            margin-top: 1vmin;
+            color: #ccc;
+            font-weight: 300;
+        }
+
+        /* 5. 갱신 시간 */
         .update-time {
-            font-size: 30px;
-            margin-top: 15px;
-            color: #888;
+            font-size: 2.5vmin;
+            margin-top: auto;
+            padding-top: 2vmin;
+            color: #666;
             font-weight: 300;
         }
 
@@ -106,31 +135,35 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            justify-content: flex-start;
+            justify-content: space-between; /* 날짜는 위, 달력은 아래 */
+            padding-bottom: 1vmin; 
         }
 
         .date-display {
-            font-size: 80px;
+            font-size: 6vmin;
             font-weight: bold;
-            margin-bottom: 20px;
             text-align: right;
             line-height: 1.1;
+            white-space: nowrap;
         }
 
         .date-green { color: #00FF00; }
         .date-red { color: #FF3B30; }
 
-        .calendar-wrapper { width: 95%; }
+        .calendar-wrapper { width: 100%; }
         
         table {
             width: 100%;
             border-collapse: collapse;
             color: #aaa;
-            font-size: 22px;
+            font-size: 2.8vmin; /* 글자 크기 키움 (2.2 -> 2.8) */
             table-layout: fixed;
         }
         
-        th, td { text-align: center; padding: 12px 0; }
+        th, td { 
+            text-align: center; 
+            padding: 1.8vmin 0; /* 셀 간격(높이) 키움 (0.8 -> 1.8) */
+        }
         
         .today {
             background-color: rgba(255,255,255,0.2);
@@ -284,20 +317,25 @@
     </div>
 
     <div class="bottom-section">
+        <!-- 좌측: 날씨 -->
         <div class="left-col">
-            <div class="weather-main">
-                <img id="weather-icon-img" src="" alt="">
-                <span id="temp" class="temp-big">--°</span>
+            <div class="weather-content-wrapper">
+                <div id="location-name" class="location-name">--</div>
+                <div class="weather-main">
+                    <img id="weather-icon-img" src="" alt="">
+                    <span id="temp" class="temp-big">--°</span>
+                </div>
+                <div id="weather-desc" class="weather-desc-text">설정 필요</div>
+                <div id="humidity" class="humidity-text"></div>
             </div>
-            <div id="weather-desc" class="weather-detail">설정에서 API키를 입력해주세요</div>
-            <div id="humidity" class="weather-detail"></div>
-            <!-- 갱신 시간 표시 (새로 추가됨) -->
+            <!-- 갱신 시간을 바닥으로 -->
             <div id="last-updated" class="update-time"></div>
         </div>
 
+        <!-- 우측: 달력 (위아래 찢어서 배치) -->
         <div class="right-col">
             <div class="date-display">
-                <span id="date-text" class="date-green">--/--/--</span><br>
+                <span id="date-text" class="date-green">--/--/-- </span>
                 <span id="day-text" class="date-red">---</span>
             </div>
             <div class="calendar-wrapper">
@@ -315,8 +353,8 @@
         // 전역 변수
         let apiKey = "";
         let city = "Seoul"; 
+        let lastRenderedDateStr = "";
 
-        // 영문명 -> 한글명 매핑 테이블
         const cityMap = {
             "Seoul": "서울", "Busan": "부산", "Incheon": "인천", "Daegu": "대구", "Daejeon": "대전", "Gwangju": "광주",
             "Suwon": "수원", "Ulsan": "울산", "Jeju": "제주", "Changwon": "창원", "Goyang": "고양", "Yongin": "용인",
@@ -395,8 +433,14 @@
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const dayName = days[now.getDay()];
 
-            document.getElementById('date-text').innerText = `${year}/${month}/${date}`;
+            document.getElementById('date-text').innerText = `${year}/${month}/${date} `;
             document.getElementById('day-text').innerText = dayName;
+
+            const currentDateStr = now.toDateString();
+            if (currentDateStr !== lastRenderedDateStr) {
+                generateCalendar();
+                lastRenderedDateStr = currentDateStr;
+            }
         }
 
         async function getWeather() {
@@ -413,19 +457,19 @@
                     document.getElementById('humidity').innerText = `습도 : ${data.main.humidity}%`;
                     
                     const koreanName = cityMap[city] || city;
-                    document.getElementById('weather-desc').innerText = `${koreanName} - ${data.weather[0].description}`;
+                    document.getElementById('location-name').innerText = koreanName;
+                    document.getElementById('weather-desc').innerText = data.weather[0].description;
 
                     const iconCode = data.weather[0].icon;
                     const iconImg = document.getElementById('weather-icon-img');
                     iconImg.src = `http://openweathermap.org/img/wn/${iconCode}@4x.png`;
                     iconImg.style.display = "block"; 
 
-                    // 👇 갱신 시간 업데이트 (새로 추가됨)
                     const now = new Date();
                     const h = String(now.getHours()).padStart(2, '0');
                     const m = String(now.getMinutes()).padStart(2, '0');
                     const s = String(now.getSeconds()).padStart(2, '0');
-                    document.getElementById('last-updated').innerText = `Last Updated: ${h}:${m}:${s}`;
+                    document.getElementById('last-updated').innerText = `갱신: ${h}:${m}:${s}`;
 
                 } else {
                     document.getElementById('weather-desc').innerText = "도시/키 오류";
