@@ -11,11 +11,11 @@
         * {
             /* 모든 요소에 진한 테두리 효과 적용 */
             text-shadow: 
-                2px 2px 4px rgba(0,0,0,0.9),  /* 깊은 그림자 */
+                2px 2px 4px rgba(0,0,0,0.9),  
                 -1px -1px 0 #000,  
                 1px -1px 0 #000,
                 -1px 1px 0 #000,
-                1px 1px 0 #000;    /* 글자 주변 1px 검은 테두리 */
+                1px 1px 0 #000;    
         }
 
         body {
@@ -201,19 +201,19 @@
         }
         .weekend { color: #ff6b6b; }
 
-        /* === 설정 모달 창 === */
+        /* === 설정 모달 창 (반응형 수정됨) === */
         #settings-modal {
             display: none;
-            position: absolute;
+            position: fixed; /* absolute -> fixed로 변경하여 스크롤시 따라오게 */
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.95);
             z-index: 100;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+            overflow-y: auto; /* 내용이 길면 스크롤 생성 */
+            
+            /* 기존 flex centering 제거하고 padding으로 조절 */
+            padding: 20px;
             box-sizing: border-box;
-            overflow-y: auto;
+            
             text-shadow: none; 
         }
 
@@ -222,18 +222,24 @@
         }
 
         .modal-content {
-            width: 80%;
+            /* 화면 중앙 정렬 및 여백 확보 */
+            margin: 5vh auto; 
+            width: 90%;
             max-width: 500px;
             text-align: center;
+            padding-bottom: 5vh; /* 하단 여백 */
         }
 
-        .modal-title { font-size: 40px; margin-bottom: 30px; font-weight: bold; }
+        /* 모달 타이틀 크기 반응형 */
+        .modal-title { font-size: 5vmin; margin-bottom: 3vmin; font-weight: bold; }
 
-        .input-group { margin-bottom: 25px; text-align: left; }
-        .input-label { display: block; font-size: 24px; margin-bottom: 10px; color: #aaa; }
+        .input-group { margin-bottom: 3vmin; text-align: left; }
+        /* 라벨 크기 반응형 */
+        .input-label { display: block; font-size: 3vmin; margin-bottom: 1vmin; color: #aaa; }
         
+        /* 인풋 필드 크기 반응형 */
         .input-field {
-            width: 100%; padding: 15px; font-size: 24px;
+            width: 100%; padding: 1.5vmin; font-size: 3vmin;
             border-radius: 10px; border: 1px solid #555;
             background-color: #333; color: white;
             box-sizing: border-box;
@@ -241,30 +247,30 @@
 
         .file-upload-btn {
             display: inline-block;
-            padding: 15px 30px;
+            padding: 1.5vmin 3vmin;
             background-color: #555;
             color: white;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 2.5vmin;
             margin-right: 10px;
         }
         .file-upload-btn:hover { background-color: #777; }
         #bg-file-input { display: none; }
 
         .reset-bg-btn {
-            padding: 15px 30px;
+            padding: 1.5vmin 3vmin;
             background-color: #d32f2f;
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 20px;
+            font-size: 2.5vmin;
             cursor: pointer;
         }
 
         .size-info {
-            margin-top: 10px;
-            font-size: 18px;
+            margin-top: 1vmin;
+            font-size: 2.2vmin;
             color: #888;
         }
         .size-warning { color: #ff6b6b; font-weight: bold; }
@@ -273,13 +279,13 @@
         .range-slider {
             width: 100%;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 1vmin;
         }
 
         .api-guide-link {
             display: block;
-            margin-top: 10px;
-            font-size: 20px;
+            margin-top: 1.5vmin;
+            font-size: 2.5vmin;
             color: #4CAF50;
             text-decoration: none;
             text-align: right;
@@ -288,15 +294,15 @@
 
         .save-btn {
             background-color: #4CAF50; color: white;
-            padding: 20px 40px; font-size: 30px;
+            padding: 2vmin 4vmin; font-size: 3.5vmin;
             border: none; border-radius: 15px; cursor: pointer;
-            margin-top: 30px; width: 100%;
+            margin-top: 3vmin; width: 100%;
         }
         .close-btn {
             background-color: transparent; color: #aaa;
-            border: 1px solid #aaa; padding: 15px 30px;
-            font-size: 24px; border-radius: 15px; cursor: pointer;
-            margin-top: 15px; width: 100%;
+            border: 1px solid #aaa; padding: 1.5vmin 3vmin;
+            font-size: 3vmin; border-radius: 15px; cursor: pointer;
+            margin-top: 2vmin; width: 100%;
         }
     </style>
 </head>
@@ -325,11 +331,10 @@
 
             <div class="input-group">
                 <label class="input-label">배경 어둡기 (Dimming): <span id="dim-val">30%</span></label>
-                <!-- 👇 기본값 30으로 설정 -->
                 <input type="range" id="dim-range" class="range-slider" min="0" max="90" value="30" oninput="updateDimming(this.value)">
             </div>
             
-            <hr style="border: 0; border-top: 1px solid #444; margin: 30px 0;">
+            <hr style="border: 0; border-top: 1px solid #444; margin: 3vmin 0;">
 
             <div class="input-group">
                 <label class="input-label">도시 선택 (Select City)</label>
@@ -448,7 +453,7 @@
         let city = "Seoul"; 
         let lastRenderedDateStr = "";
         let bgImageBase64 = ""; 
-        let bgDimming = 30; // 👈 [수정됨] 기본값 30으로 설정
+        let bgDimming = 30; // 기본값 30
 
         const cityMap = {
             "Seoul": "서울", "Busan": "부산", "Incheon": "인천", "Daegu": "대구", "Daejeon": "대전", "Gwangju": "광주",
@@ -492,13 +497,10 @@
                 updateSizeInfo(bgImageBase64.length);
             }
             
-            // 👇 [수정됨] 저장된 값이 있으면(문자열 "0" 포함) 사용, 없으면 기본값 30 사용
             if (savedDim !== null) {
                 bgDimming = parseInt(savedDim, 10);
             }
-            // 저장된 값이 없으면 bgDimming은 초기값 30 그대로 유지됨.
             
-            // UI에 적용
             updateDimming(bgDimming); 
             document.getElementById('dim-range').value = bgDimming; 
 
@@ -578,7 +580,7 @@
         }
 
         function openSettings() {
-            document.getElementById('settings-modal').style.display = "flex";
+            document.getElementById('settings-modal').style.display = "block"; /* flex -> block */
         }
 
         function closeSettings() {
