@@ -18,6 +18,12 @@
                 1px 1px 0 #000;    
         }
 
+        /* 스크롤바 커스텀 (모달 내부용) */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+
         body {
             background-color: #121212;
             color: white;
@@ -47,7 +53,7 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background-color: rgba(0,0,0,0.3); /* 기본 30% 적용 */
+            background-color: rgba(0,0,0,0.3);
             pointer-events: none;
         }
 
@@ -192,70 +198,110 @@
             padding: 1.8vmin 0;
         }
         
+        .date-circle {
+            display: inline-block;
+            width: 5vmin;
+            height: 5vmin;
+            line-height: 5vmin;
+            border-radius: 50%;
+            text-align: center;
+        }
+
         .today {
             background-color: rgba(255,255,255,0.4);
-            border-radius: 50%;
-            color: white;
+            color: white !important;
             font-weight: bold;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .weekend { color: #ff6b6b; }
 
-        /* === 설정 모달 창 (반응형 수정됨) === */
+        /* === 설정 모달 창 (개선된 레이아웃) === */
         #settings-modal {
             display: none;
-            position: fixed; /* absolute -> fixed로 변경하여 스크롤시 따라오게 */
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.95);
+            background-color: rgba(0,0,0,0.85); /* 배경 살짝 투명 */
             z-index: 100;
-            overflow-y: auto; /* 내용이 길면 스크롤 생성 */
-            
-            /* 기존 flex centering 제거하고 padding으로 조절 */
-            padding: 20px;
-            box-sizing: border-box;
-            
+            /* Flex로 중앙 정렬 */
+            display: none; /* JS로 flex로 변경됨 */
+            justify-content: center;
+            align-items: center;
             text-shadow: none; 
         }
 
-        #settings-modal * {
-            text-shadow: none;
-        }
+        #settings-modal * { text-shadow: none; }
 
+        /* 모달 컨텐츠 박스 */
         .modal-content {
-            /* 화면 중앙 정렬 및 여백 확보 */
-            margin: 5vh auto; 
+            background-color: #1e1e1e;
             width: 90%;
-            max-width: 500px;
-            text-align: center;
-            padding-bottom: 5vh; /* 하단 여백 */
+            max-width: 550px;
+            max-height: 85vh; /* 화면 높이의 85%까지만 차지 */
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column; /* 세로 배치 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+            position: relative;
         }
 
-        /* 모달 타이틀 크기 반응형 */
-        .modal-title { font-size: 5vmin; margin-bottom: 3vmin; font-weight: bold; }
+        /* 1. 헤더 (제목 + 닫기버튼) */
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* 크기 줄어들지 않음 */
+        }
+        .modal-title { font-size: 4vmin; font-weight: bold; margin: 0; }
+        .close-icon {
+            font-size: 4vmin;
+            cursor: pointer;
+            color: #aaa;
+            padding: 5px;
+        }
+        .close-icon:hover { color: white; }
 
+        /* 2. 바디 (스크롤 영역) */
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto; /* 내용 넘치면 스크롤 */
+            flex-grow: 1; /* 남은 공간 차지 */
+        }
+
+        /* 3. 푸터 (버튼 고정 영역) */
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #333;
+            flex-shrink: 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 입력 폼 스타일 */
         .input-group { margin-bottom: 3vmin; text-align: left; }
-        /* 라벨 크기 반응형 */
-        .input-label { display: block; font-size: 3vmin; margin-bottom: 1vmin; color: #aaa; }
+        .input-label { display: block; font-size: 2.5vmin; margin-bottom: 1vmin; color: #aaa; }
         
-        /* 인풋 필드 크기 반응형 */
         .input-field {
-            width: 100%; padding: 1.5vmin; font-size: 3vmin;
-            border-radius: 10px; border: 1px solid #555;
-            background-color: #333; color: white;
+            width: 100%; padding: 1.5vmin; font-size: 2.5vmin;
+            border-radius: 8px; border: 1px solid #444;
+            background-color: #2a2a2a; color: white;
             box-sizing: border-box;
         }
 
         .file-upload-btn {
             display: inline-block;
             padding: 1.5vmin 3vmin;
-            background-color: #555;
+            background-color: #444;
             color: white;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 2.5vmin;
+            font-size: 2.2vmin;
             margin-right: 10px;
+            text-align: center;
         }
-        .file-upload-btn:hover { background-color: #777; }
+        .file-upload-btn:hover { background-color: #555; }
         #bg-file-input { display: none; }
 
         .reset-bg-btn {
@@ -263,14 +309,14 @@
             background-color: #d32f2f;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 2.5vmin;
+            border-radius: 8px;
+            font-size: 2.2vmin;
             cursor: pointer;
         }
 
         .size-info {
             margin-top: 1vmin;
-            font-size: 2.2vmin;
+            font-size: 2vmin;
             color: #888;
         }
         .size-warning { color: #ff6b6b; font-weight: bold; }
@@ -285,25 +331,29 @@
         .api-guide-link {
             display: block;
             margin-top: 1.5vmin;
-            font-size: 2.5vmin;
+            font-size: 2.2vmin;
             color: #4CAF50;
             text-decoration: none;
             text-align: right;
         }
         .api-guide-link:hover { text-decoration: underline; }
 
+        /* 하단 버튼 스타일 */
         .save-btn {
             background-color: #4CAF50; color: white;
-            padding: 2vmin 4vmin; font-size: 3.5vmin;
-            border: none; border-radius: 15px; cursor: pointer;
-            margin-top: 3vmin; width: 100%;
+            padding: 1.5vmin; font-size: 3vmin;
+            border: none; border-radius: 10px; cursor: pointer;
+            flex: 2; /* 버튼 비율 2 */
         }
         .close-btn {
             background-color: transparent; color: #aaa;
-            border: 1px solid #aaa; padding: 1.5vmin 3vmin;
-            font-size: 3vmin; border-radius: 15px; cursor: pointer;
-            margin-top: 2vmin; width: 100%;
+            border: 1px solid #555; padding: 1.5vmin;
+            font-size: 3vmin; border-radius: 10px; cursor: pointer;
+            flex: 1; /* 버튼 비율 1 */
         }
+        .save-btn:hover { background-color: #45a049; }
+        .close-btn:hover { border-color: #aaa; color: white; }
+
     </style>
 </head>
 <body>
@@ -313,99 +363,109 @@
     <!-- 어둡기 오버레이 -->
     <div id="overlay-layer"></div>
 
-    <!-- 설정 모달창 -->
+    <!-- 설정 모달창 (구조 변경됨) -->
     <div id="settings-modal">
         <div class="modal-content">
-            <div class="modal-title">설정 (Settings)</div>
-            
-            <div class="input-group">
-                <label class="input-label">배경 이미지 (Background)</label>
-                <label for="bg-file-input" class="file-upload-btn">📷 사진 선택</label>
-                <input type="file" id="bg-file-input" accept="image/*" onchange="previewImage(this)">
-                <button class="reset-bg-btn" onclick="resetBackground()">초기화</button>
+            <!-- 1. 헤더 (고정) -->
+            <div class="modal-header">
+                <div class="modal-title">설정 (Settings)</div>
+                <div class="close-icon" onclick="closeSettings()">✕</div>
+            </div>
+
+            <!-- 2. 바디 (스크롤 가능) -->
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="input-label">배경 이미지 (Background)</label>
+                    <label for="bg-file-input" class="file-upload-btn">📷 사진 선택</label>
+                    <input type="file" id="bg-file-input" accept="image/*" onchange="previewImage(this)">
+                    <button class="reset-bg-btn" onclick="resetBackground()">초기화</button>
+                    
+                    <div id="file-size-info" class="size-info">
+                        현재 이미지: 없음 / 최대 저장 용량: 약 5 MB
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">배경 어둡기 (Dimming): <span id="dim-val">30%</span></label>
+                    <input type="range" id="dim-range" class="range-slider" min="0" max="90" value="30" oninput="updateDimming(this.value)">
+                </div>
                 
-                <div id="file-size-info" class="size-info">
-                    현재 이미지: 없음 / 최대 저장 용량: 약 5 MB
+                <hr style="border: 0; border-top: 1px solid #444; margin: 3vmin 0;">
+
+                <div class="input-group">
+                    <label class="input-label">도시 선택 (Select City)</label>
+                    <input list="korea-cities" id="input-city" class="input-field" placeholder="도시 검색 또는 선택 (예: Seoul)">
+                    <datalist id="korea-cities">
+                        <option value="Seoul">서울</option>
+                        <option value="Busan">부산</option>
+                        <option value="Incheon">인천</option>
+                        <option value="Daegu">대구</option>
+                        <option value="Daejeon">대전</option>
+                        <option value="Gwangju">광주</option>
+                        <option value="Suwon">수원</option>
+                        <option value="Ulsan">울산</option>
+                        <option value="Jeju">제주</option>
+                        <option value="Changwon">창원</option>
+                        <option value="Goyang">고양</option>
+                        <option value="Yongin">용인</option>
+                        <option value="Seongnam">성남</option>
+                        <option value="Bucheon">부천</option>
+                        <option value="Cheongju">청주</option>
+                        <option value="Ansan">안산</option>
+                        <option value="Jeonju">전주</option>
+                        <option value="Cheonan">천안</option>
+                        <option value="Namyangju">남양주</option>
+                        <option value="Hwaseong">화성</option>
+                        <option value="Anyang">안양</option>
+                        <option value="Gimhae">김해</option>
+                        <option value="Pyeongtaek">평택</option>
+                        <option value="Pohang">포항</option>
+                        <option value="Uijeongbu">의정부</option>
+                        <option value="Siheung">시흥</option>
+                        <option value="Paju">파주</option>
+                        <option value="Gumi">구미</option>
+                        <option value="Gwangmyeong">광명</option>
+                        <option value="Gimpo">김포</option>
+                        <option value="Jinju">진주</option>
+                        <option value="Wonju">원주</option>
+                        <option value="Asan">아산</option>
+                        <option value="Iksan">익산</option>
+                        <option value="Yangsan">양산</option>
+                        <option value="Gunpo">군포</option>
+                        <option value="Chuncheon">춘천</option>
+                        <option value="Gyeongsan">경산</option>
+                        <option value="Gunsan">군산</option>
+                        <option value="Yeosu">여수</option>
+                        <option value="Suncheon">순천</option>
+                        <option value="Mokpo">목포</option>
+                        <option value="Gangneung">강릉</option>
+                        <option value="Chungju">충주</option>
+                        <option value="Icheon">이천</option>
+                        <option value="Yangju">양주</option>
+                        <option value="Osan">오산</option>
+                        <option value="Guri">구리</option>
+                        <option value="Anseong">안성</option>
+                        <option value="Seosan">서산</option>
+                        <option value="Sejong">세종</option>
+                        <option value="Andong">안동</option>
+                        <option value="Geoje">거제</option>
+                    </datalist>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">API Key</label>
+                    <input type="text" id="input-key" class="input-field" placeholder="OpenWeatherMap API Key">
+                    <a href="https://home.openweathermap.org/users/sign_up" target="_blank" class="api-guide-link">
+                        API Key 무료 발급받기 (Click) ↗
+                    </a>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label class="input-label">배경 어둡기 (Dimming): <span id="dim-val">30%</span></label>
-                <input type="range" id="dim-range" class="range-slider" min="0" max="90" value="30" oninput="updateDimming(this.value)">
+            <!-- 3. 푸터 (버튼 고정) -->
+            <div class="modal-footer">
+                <button class="close-btn" onclick="closeSettings()">닫기</button>
+                <button class="save-btn" onclick="saveSettings()">저장하기</button>
             </div>
-            
-            <hr style="border: 0; border-top: 1px solid #444; margin: 3vmin 0;">
-
-            <div class="input-group">
-                <label class="input-label">도시 선택 (Select City)</label>
-                <input list="korea-cities" id="input-city" class="input-field" placeholder="도시 검색 또는 선택 (예: Seoul)">
-                <datalist id="korea-cities">
-                    <option value="Seoul">서울</option>
-                    <option value="Busan">부산</option>
-                    <option value="Incheon">인천</option>
-                    <option value="Daegu">대구</option>
-                    <option value="Daejeon">대전</option>
-                    <option value="Gwangju">광주</option>
-                    <option value="Suwon">수원</option>
-                    <option value="Ulsan">울산</option>
-                    <option value="Jeju">제주</option>
-                    <option value="Changwon">창원</option>
-                    <option value="Goyang">고양</option>
-                    <option value="Yongin">용인</option>
-                    <option value="Seongnam">성남</option>
-                    <option value="Bucheon">부천</option>
-                    <option value="Cheongju">청주</option>
-                    <option value="Ansan">안산</option>
-                    <option value="Jeonju">전주</option>
-                    <option value="Cheonan">천안</option>
-                    <option value="Namyangju">남양주</option>
-                    <option value="Hwaseong">화성</option>
-                    <option value="Anyang">안양</option>
-                    <option value="Gimhae">김해</option>
-                    <option value="Pyeongtaek">평택</option>
-                    <option value="Pohang">포항</option>
-                    <option value="Uijeongbu">의정부</option>
-                    <option value="Siheung">시흥</option>
-                    <option value="Paju">파주</option>
-                    <option value="Gumi">구미</option>
-                    <option value="Gwangmyeong">광명</option>
-                    <option value="Gimpo">김포</option>
-                    <option value="Jinju">진주</option>
-                    <option value="Wonju">원주</option>
-                    <option value="Asan">아산</option>
-                    <option value="Iksan">익산</option>
-                    <option value="Yangsan">양산</option>
-                    <option value="Gunpo">군포</option>
-                    <option value="Chuncheon">춘천</option>
-                    <option value="Gyeongsan">경산</option>
-                    <option value="Gunsan">군산</option>
-                    <option value="Yeosu">여수</option>
-                    <option value="Suncheon">순천</option>
-                    <option value="Mokpo">목포</option>
-                    <option value="Gangneung">강릉</option>
-                    <option value="Chungju">충주</option>
-                    <option value="Icheon">이천</option>
-                    <option value="Yangju">양주</option>
-                    <option value="Osan">오산</option>
-                    <option value="Guri">구리</option>
-                    <option value="Anseong">안성</option>
-                    <option value="Seosan">서산</option>
-                    <option value="Sejong">세종</option>
-                    <option value="Andong">안동</option>
-                    <option value="Geoje">거제</option>
-                </datalist>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label">API Key</label>
-                <input type="text" id="input-key" class="input-field" placeholder="OpenWeatherMap API Key">
-                <a href="https://home.openweathermap.org/users/sign_up" target="_blank" class="api-guide-link">
-                    API Key 무료 발급받기 (Click) ↗
-                </a>
-            </div>
-
-            <button class="save-btn" onclick="saveSettings()">저장하기 (Save)</button>
-            <button class="close-btn" onclick="closeSettings()">닫기 (Close)</button>
         </div>
     </div>
 
@@ -453,7 +513,7 @@
         let city = "Seoul"; 
         let lastRenderedDateStr = "";
         let bgImageBase64 = ""; 
-        let bgDimming = 30; // 기본값 30
+        let bgDimming = 30; 
 
         const cityMap = {
             "Seoul": "서울", "Busan": "부산", "Incheon": "인천", "Daegu": "대구", "Daejeon": "대전", "Gwangju": "광주",
@@ -580,7 +640,8 @@
         }
 
         function openSettings() {
-            document.getElementById('settings-modal').style.display = "block"; /* flex -> block */
+            // flex 정렬 활성화
+            document.getElementById('settings-modal').style.display = "flex";
         }
 
         function closeSettings() {
@@ -664,16 +725,22 @@
                 let row = document.createElement("tr");
                 for (let j = 0; j < 7; j++) {
                     let cell = document.createElement("td");
+                    // 동그라미 컨테이너 생성
+                    let content = "";
+                    
                     if (i === 0 && j < firstDay) {
-                        cell.innerText = "";
+                        content = ""; 
                     } else if (date > lastDate) {
-                        break;
+                        // 날짜 끝
                     } else {
-                        cell.innerText = date;
-                        if (date === today) cell.classList.add("today");
-                        if (j === 0 || j === 6) cell.classList.add("weekend");
+                        let className = "date-circle";
+                        if (date === today) className += " today";
+                        if (j === 0 || j === 6) className += " weekend";
+                        
+                        content = `<span class="${className}">${date}</span>`;
                         date++;
                     }
+                    cell.innerHTML = content;
                     row.appendChild(cell);
                 }
                 tbody.appendChild(row);
