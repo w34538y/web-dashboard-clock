@@ -1,5 +1,89 @@
-[how to use]
-1. set up your region
-2. set up your openweather API Key
-<img width="1170" height="962" alt="스크린샷 2025-12-05 17 20 35" src="https://github.com/user-attachments/assets/d6f204f5-b574-427e-8dd0-3445b742d197" />
-<img width="1170" height="962" alt="스크린샷 2025-12-05 17 20 29" src="https://github.com/user-attachments/assets/94c9f392-ef49-4135-8bd0-f529bf2be68d" />
+# Smart Dashboard (Web Clock & Weather)
+
+구형 태블릿(예: **iPad 4**)이나 남는 모니터를 스마트 홈 대시보드로 재활용하기 위한 **초경량 웹 애플리케이션**입니다.
+집에 남아도는 구형 태블릿 PC를 활용하고자 만든 프로젝트입니다.
+단 하나의 HTML 파일로 구성되어 있으며, 별도의 서버나 설치 과정 없이 브라우저만 있으면 어디서든 실행 가능합니다.
+
+---
+
+### 📷 스크린샷
+<img width="1755" height="1336" alt="스크린샷 2025-12-16 오후 11 09 53" src="https://github.com/user-attachments/assets/d2e2b797-7d54-45e7-b689-c606307f4f1a" />
+<img width="1755" height="1336" alt="스크린샷 2025-12-16 오후 11 10 44" src="https://github.com/user-attachments/assets/4be91252-5e6a-4b09-b5f7-1bcc28577f81" />
+
+
+---
+
+## 주요 기능
+
+* **실시간 시계**: 화면 크기에 최적화된 대형 디지털 시계 (**시:분:초**).
+* **스마트 달력**: 매일 자동으로 갱신되며 오늘 날짜를 하이라이트하는 월간 달력.
+* **실시간 날씨**: **OpenWeatherMap API**를 연동하여 현재 기온, 날씨 상태, 습도를 표시.
+* **배경화면 커스터마이징**: 사용자가 원하는 사진을 업로드하여 배경으로 설정 가능 (**로컬 저장**).
+* **가독성 모드**: 배경 이미지 위에 **검은 막(Dimming) 농도**를 조절하여 글자 가독성 확보.
+* **완벽한 반응형**: `vmin` 단위를 사용하여 4:3(아이패드), 16:9, 16:10 등 **모든 화면 비율 대응**.
+* **데이터 저장**: API 키, 도시 설정, 배경 이미지는 브라우저(**localStorage**)에 저장되어 재접속 시에도 유지됨.
+
+---
+
+## 사용 방법
+
+이 프로젝트는 별도의 빌드 과정이 필요 없습니다.
+
+1. 이 저장소의 `index.html` 파일을 **다운로드**합니다.
+2. 사용하려는 기기(아이패드, 태블릿, PC 등)의 브라우저에서 `index.html` 파일을 **엽니다**.
+3. 화면 우측 상단의 **설정 아이콘(⚙️)**을 클릭합니다.
+4. OpenWeatherMap API Key와 **도시 이름(예: `Seoul`)**을 입력하고 저장합니다.
+5. (선택 사항) 배경 이미지를 업로드하고 어둡기(Dimming)를 조절하여 꾸밉니다.
+6. 아니면 주소를 통해 접속하여 사용하여도 무방합니다. https://w34538y.github.io/web-dashboard-clock/ (온라인 연결이 되는 환경일 경우) 
+
+---
+
+## API Key 발급 방법
+
+날씨 정보를 불러오기 위해서는 OpenWeatherMap의 **무료 API 키**가 필요합니다.
+
+1. [OpenWeatherMap 회원가입 페이지](https://home.openweathermap.org/users/sign_up)로 이동합니다.
+2. 회원가입 후 로그인하여 [API Keys 메뉴](https://home.openweathermap.org/api_keys)로 이동합니다.
+3. 제공된 Default 키를 복사하거나 새로 생성하여 대시보드 설정창에 붙여넣습니다.
+
+> ⚠️ **참고**: 키 발급 직후에는 활성화까지 10~30분 정도 소요될 수 있습니다.
+
+---
+
+## 아이패드/태블릿 전체화면 팁
+
+### iOS (iPad, iPhone)
+1. Safari 브라우저에서 페이지를 엽니다.
+2. 상단(또는 하단)의 **공유 버튼**을 누릅니다.
+3. **'홈 화면에 추가'**를 선택합니다.
+4. 바탕화면에 생긴 아이콘을 누르면 주소창 없는 **전체 화면 앱처럼 실행**됩니다.
+5. 이런 기능이 되지 않는다면 fullscreen browser 등을 다운로드 받아 활용해보세요.
+
+### Android / Chrome
+1. Chrome 브라우저에서 페이지를 엽니다.
+2. 우측 상단 메뉴(**⋮**)를 누르고 **'홈 화면에 추가'**를 선택합니다.
+3. 또는 대시보드 우측 상단의 **전체화면 버튼(⛶)**을 눌러 즉시 전체 화면으로 전환할 수 있습니다.
+
+---
+
+## 기술 스택
+
+| 구분 | 내용 |
+| :--- | :--- |
+| **Markup / Style** | HTML5 / CSS3 (Flexbox 및 `vmin` 단위를 활용한 반응형 레이아웃) |
+| **Logic** | JavaScript (Vanilla JS, 외부 라이브러리 없이 순수 자바스크립트로 구현) |
+| **API** | OpenWeatherMap (Current Weather Data) |
+| **Storage** | Web LocalStorage API (설정값 영구 저장) |
+
+---
+
+## 주의 사항
+
+* **배경 이미지 용량**: 브라우저의 로컬 스토리지 저장 한계(일반적으로 약 5MB)로 인해 **고화질 대용량 이미지**는 저장이 안 될 수 있습니다. (용량 초과 시 경고 메시지가 표시됩니다.)
+* **구형 기기**: iPad 4 (iOS 10.3.4) Safari 브라우저에서도 정상 작동하도록 ES6 최신 문법 중 호환되지 않는 일부 기능은 대체하거나 폴리필 없이 작동 가능한 코드로 작성되었습니다.
+
+---
+
+## 라이선스
+
+This project is licensed under the **MIT License**. 자유롭게 수정하고 배포하셔도 됩니다.
